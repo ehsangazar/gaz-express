@@ -18,7 +18,8 @@
     "pino": "^8.20.0",
     "pino-http": "^9.0.0",
     "pino-pretty": "^11.0.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "validatorjs": "^3.22.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
