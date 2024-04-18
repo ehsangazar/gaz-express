@@ -1,10 +1,14 @@
+import logger from "./utils/logger";
+
 class EmailService {
-  sendEmail = async (): Promise<boolean> => {
+  sendEmail = async (data): Promise<boolean> => {
     const randomNumber = Math.random();
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return randomNumber < 0.95;
+    const result = randomNumber < 0.95;
+    logger.info(`Email: ${data.userEmail} => ${result}`);
+    return result;
   };
 }
 
