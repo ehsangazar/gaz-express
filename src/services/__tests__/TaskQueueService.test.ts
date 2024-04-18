@@ -32,8 +32,6 @@ describe("TaskQueueService", () => {
     taskQueueServiceObj.push({
       executionTimestamp: 1,
       userEmail: "me@gazar.dev",
-      subject: "test",
-      body: "test",
     });
     expect(taskQueueServiceObj.list().length).toBe(1);
   });
@@ -49,14 +47,10 @@ describe("TaskQueueService", () => {
     taskQueueServiceObj.push({
       executionTimestamp: 10,
       userEmail: "me@gazar.dev",
-      subject: "test",
-      body: "test",
     });
     taskQueueServiceObj.push({
       executionTimestamp: 1,
       userEmail: "me@gazar.dev",
-      subject: "test",
-      body: "test",
     });
     expect(taskQueueServiceObj.shift().executionTimestamp).toBe(1);
   });
@@ -72,8 +66,6 @@ describe("TaskQueueService", () => {
     taskQueueServiceObj.push({
       executionTimestamp: 1,
       userEmail: "me@gazar.dev",
-      subject: "test",
-      body: "test",
     });
     taskQueueServiceObj.start();
     expect(taskQueueServiceObj.started).toBe(true);
@@ -92,8 +84,6 @@ describe("TaskQueueService", () => {
     });
     taskQueueServiceObj.push({
       userEmail: "me@gazar.dev",
-      subject: "test",
-      body: "test",
       executionTimestamp: Date.now(),
     });
     taskQueueServiceObj.start();
@@ -112,8 +102,6 @@ describe("TaskQueueService", () => {
     });
     taskQueueServiceObj.push({
       userEmail: "me@gazar.dev",
-      subject: "test",
-      body: "test",
       executionTimestamp: Date.now() + 1000 * 60,
     });
     taskQueueServiceObj.start();

@@ -1,51 +1,21 @@
 import mockFlowMap from "../../../mock/mockFlowMap";
-import EmailQueueService from "../EmailQueueService";
-import EmailService from "../EmailService";
-import EventService from "../EventService";
 import FlowManagerService from "../FlowManagerService";
 import TaskQueueService from "../TaskQueueService";
 
 jest.useFakeTimers().setSystemTime(new Date("2020-01-01"));
 jest.mock("../EmailService");
-jest.mock("../EmailQueueService");
 
 describe("TaskQueueService", () => {
   it("should be a function", () => {
     expect(typeof TaskQueueService).toBe("function");
   });
   it("should have emit and listen", () => {
-    const eventServiceObj = new EventService();
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    const flowServiceObj = new FlowManagerService(
-      eventServiceObj,
-      emailQueueServiceObj,
-      taskQueueServiceObj,
-      mockFlowMap
-    );
+    const flowServiceObj = new FlowManagerService(mockFlowMap);
     expect(typeof flowServiceObj.emit).toBe("function");
     expect(typeof flowServiceObj.listen).toBe("function");
   });
   it("should work with whenCalculator", () => {
-    const eventServiceObj = new EventService();
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    const flowServiceObj = new FlowManagerService(
-      eventServiceObj,
-      emailQueueServiceObj,
-      taskQueueServiceObj,
-      mockFlowMap
-    );
+    const flowServiceObj = new FlowManagerService(mockFlowMap);
     expect(
       flowServiceObj.whenCalculator({
         seconds: 10,
@@ -55,79 +25,27 @@ describe("TaskQueueService", () => {
     ).toBe(1577840470000);
   });
   it("should listen", () => {
-    const eventServiceObj = new EventService();
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    eventServiceObj.on = jest.fn();
-    const flowServiceObj = new FlowManagerService(
-      eventServiceObj,
-      emailQueueServiceObj,
-      taskQueueServiceObj,
-      mockFlowMap
-    );
+    const flowServiceObj = new FlowManagerService(mockFlowMap);
+    flowServiceObj.eventServiceObj.on = jest.fn();
     flowServiceObj.listen();
-    expect(eventServiceObj.on).toHaveBeenCalled();
+    expect(flowServiceObj.eventServiceObj.on).toHaveBeenCalled();
   });
   it("should listen after emit socksPurchased", () => {
-    const eventServiceObj = new EventService();
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    emailQueueServiceObj.push = jest.fn();
-    const flowServiceObj = new FlowManagerService(
-      eventServiceObj,
-      emailQueueServiceObj,
-      taskQueueServiceObj,
-      mockFlowMap
-    );
+    const flowServiceObj = new FlowManagerService(mockFlowMap);
+    flowServiceObj.emailQueueServiceObj.push = jest.fn();
     flowServiceObj.listen();
     flowServiceObj.emit("socksPurchased", "me@gazar.dev");
-    expect(emailQueueServiceObj.push).toHaveBeenCalled();
+    expect(flowServiceObj.emailQueueServiceObj.push).toHaveBeenCalled();
   });
   it("should listen to emit websiteSignup", () => {
-    const eventServiceObj = new EventService();
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    taskQueueServiceObj.push = jest.fn();
-    const flowServiceObj = new FlowManagerService(
-      eventServiceObj,
-      emailQueueServiceObj,
-      taskQueueServiceObj,
-      mockFlowMap
-    );
+    const flowServiceObj = new FlowManagerService(mockFlowMap);
+    flowServiceObj.taskQueueServiceObj.push = jest.fn();
     flowServiceObj.listen();
     flowServiceObj.emit("websiteSignup", "me@gazar.dev");
-    expect(taskQueueServiceObj.push).toHaveBeenCalled();
+    expect(flowServiceObj.taskQueueServiceObj.push).toHaveBeenCalled();
   });
   it("should listen to after emit socksPurchased", () => {
-    const eventServiceObj = new EventService();
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    const flowServiceObj = new FlowManagerService(
-      eventServiceObj,
-      emailQueueServiceObj,
-      taskQueueServiceObj,
-      mockFlowMap
-    );
+    const flowServiceObj = new FlowManagerService(mockFlowMap);
     flowServiceObj.emit = jest.fn();
     flowServiceObj.listen();
     flowServiceObj.emit("socksPurchased", "me@gazar.dev");

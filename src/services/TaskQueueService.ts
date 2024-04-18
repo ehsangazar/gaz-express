@@ -1,10 +1,9 @@
 import config from "../config/config";
+import { IflowMap } from "../config/flowMap";
 
 interface Item {
-  executionTimestamp: number;
   userEmail: string;
-  subject?: string;
-  body: string;
+  executionTimestamp: number;
 }
 
 class TaskQueueService {

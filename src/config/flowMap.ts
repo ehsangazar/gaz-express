@@ -1,10 +1,10 @@
 export type IflowMap = {
   [key: string]: {
     type: string;
-    when: {
-      seconds: string;
-      minutes: string;
-      hours: string;
+    when?: {
+      seconds?: number;
+      minutes?: number;
+      hours?: number;
     };
     subject: string;
     body: string;

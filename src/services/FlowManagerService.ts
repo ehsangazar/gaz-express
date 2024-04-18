@@ -2,25 +2,41 @@ import EventService from "./EventService";
 import EmailQueueService from "./EmailQueueService";
 import TaskQueueService from "./TaskQueueService";
 import { IflowMap } from "../config/flowMap";
+import EmailService from "./EmailService";
 
 class FlowManagerService {
-  private eventServiceObj;
-  private emailQueueServiceObj;
-  private taskQueueServiceObj;
-  private flowMap: IflowMap;
-  constructor(
-    eventServiceObj: EventService,
-    emailQueueServiceObj: EmailQueueService,
-    taskQueueServiceObj: TaskQueueService,
-    flowMap
-  ) {
-    this.eventServiceObj = eventServiceObj;
-    this.emailQueueServiceObj = emailQueueServiceObj;
-    this.taskQueueServiceObj = taskQueueServiceObj;
+  public eventServiceObj: EventService;
+  public emailServiceObj: EmailService;
+  public emailQueueServiceObj: EmailQueueService;
+  public taskQueueServiceObj: TaskQueueService;
+  public flowMap: IflowMap;
+  constructor(flowMap: IflowMap) {
+    this.eventServiceObj = new EventService();
+    this.emailServiceObj = new EmailService();
+    this.emailQueueServiceObj = new EmailQueueService({
+      callToFunction: this.sendEmail.bind(this),
+    });
+    this.taskQueueServiceObj = new TaskQueueService({
+      callToFunction: this.pushToEmailQueueService.bind(this),
+    });
     this.flowMap = flowMap;
   }
 
-  emit(eventName, userEmail) {
+  async sendEmail(item) {
+    const response = await this.emailServiceObj.sendEmail(item);
+    if (response && item.after?.length) {
+      item.after.map((singleEvent) => {
+        this.emit(singleEvent, item.userEmail);
+      });
+    }
+    return response;
+  }
+
+  pushToEmailQueueService(item) {
+    this.emailQueueServiceObj.push(item);
+  }
+
+  emit(eventName: string, userEmail: string) {
     this.eventServiceObj.emit(eventName, userEmail);
   }
 
@@ -33,7 +49,7 @@ class FlowManagerService {
       time += when.minutes * 60 * 1000;
     }
     if (when.hours) {
-      time += when.minutes * 60 * 60 * 1000;
+      time += when.hours * 60 * 60 * 1000;
     }
     return time;
   }
@@ -46,27 +62,24 @@ class FlowManagerService {
           case "scheduled":
             this.taskQueueServiceObj.push({
               userEmail,
-              subject: flow.subject,
-              body: flow.body,
               executionTimestamp: this.whenCalculator(flow.when),
+              ...flow,
             });
             break;
           case "now":
             this.emailQueueServiceObj.push({
               userEmail,
-              subject: flow.subject,
-              body: flow.body,
+              ...flow,
             });
             break;
         }
-
-        if (flow.after) {
-          flow.after.map((afterEventName) => {
-            this.emit(afterEventName, userEmail);
-          });
-        }
       });
     });
+  }
+
+  start() {
+    this.emailQueueServiceObj.start();
+    this.taskQueueServiceObj.start();
   }
 }
 

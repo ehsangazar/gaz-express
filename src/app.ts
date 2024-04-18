@@ -1,29 +1,11 @@
-import EventService from "./services/EventService";
-import EmailService from "./services/EmailService";
-import EmailQueueService from "./services/EmailQueueService";
-import FlowManagerService from "./services/FlowManagerService";
-import TaskQueueService from "./services/TaskQueueService";
 import flowMap from "./config/flowMap";
+import FlowManagerService from "./services/FlowManagerService";
 
-const eventServiceObj = new EventService();
-const emailServiceObj = new EmailService();
-const emailQueueServiceObj = new EmailQueueService({
-  callToFunction: emailServiceObj.sendEmail,
-});
-const taskQueueServiceObj = new TaskQueueService({
-  callToFunction: emailQueueServiceObj.push,
-});
+const flowManagerObj = new FlowManagerService(flowMap);
 
-const flowServiceObj = new FlowManagerService(
-  eventServiceObj,
-  emailQueueServiceObj,
-  taskQueueServiceObj,
-  flowMap
-);
+flowManagerObj.listen();
 
-flowServiceObj.listen();
-emailQueueServiceObj.start();
-taskQueueServiceObj.start();
+flowManagerObj.emit("websiteSignup", "me@gazar.dev");
+flowManagerObj.emit("socksPurchased", "me@gazar.dev");
 
-flowServiceObj.emit("websiteSignup", "me@gazar.dev");
-flowServiceObj.emit("socksPurchased", "me@gazar.dev");
+flowManagerObj.start();
