@@ -1,7 +1,6 @@
 import EmailQueueService from "../EmailQueueService";
 import EmailService from "../EmailService";
 
-jest.useFakeTimers();
 jest.mock("../EmailService");
 describe("EmailQueueService", () => {
   it("should be a function", () => {
@@ -39,26 +38,24 @@ describe("EmailQueueService", () => {
     expect(emailQueueServiceObj.started).toBe(false);
   });
 
-  it("should finish the stack", () => {
+  it("should finish the stack", async () => {
     const emailServiceObj = new EmailService();
     const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
     emailServiceObj.sendEmail = jest.fn(async () => true);
     emailQueueServiceObj.push(1);
     emailQueueServiceObj.start();
-    setTimeout(() => {
-      expect(emailQueueServiceObj.list().length).toBe(0);
-    }, 10);
+    await new Promise((r) => setTimeout(r, 10));
+    emailQueueServiceObj.stop();
+    expect(emailQueueServiceObj.list().length).toBe(0);
   });
-  it("should finish push an item back to stack", () => {
+  it("should finish push an item back to stack", async () => {
     const emailServiceObj = new EmailService();
     const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
     emailServiceObj.sendEmail = jest.fn(async () => false);
-    emailQueueServiceObj.push = jest.fn(() => {});
     emailQueueServiceObj.push(1);
     emailQueueServiceObj.start();
-    setTimeout(() => {
-      expect(emailQueueServiceObj.push).toHaveBeenCalled();
-      expect(emailQueueServiceObj.list().length).toBe(1);
-    }, 10);
+    await new Promise((r) => setTimeout(r, 100));
+    emailQueueServiceObj.stop();
+    expect(emailQueueServiceObj.list().length).toBe(1);
   });
 });
