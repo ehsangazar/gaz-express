@@ -8,6 +8,7 @@ class EmailService {
 
     const result = randomNumber < 0.95;
     logger.info(`Email: ${data.userEmail} => ${result}`);
+    logger.info(data);
     return result;
   };
 }
