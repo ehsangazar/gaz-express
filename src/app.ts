@@ -1,11 +1,19 @@
-import flowMap from "./config/flowMap";
-import FlowManagerService from "./services/FlowManagerService";
+import express from "express";
+import logger from "./utils/logger";
+import { pinoHttp } from "pino-http";
+import bodyParser from "body-parser";
+import routes from "./routes";
 
-const flowManagerObj = new FlowManagerService(flowMap);
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-flowManagerObj.listen();
+app.use(pinoHttp({ logger }));
 
-flowManagerObj.emit("websiteSignup", "me@gazar.dev");
-flowManagerObj.emit("socksPurchased", "me@gazar.dev");
+app.use("/", routes);
 
-flowManagerObj.start();
+app.set("port", process.env.PORT || 3000);
+
+const server = app.listen(app.get("port"), () => {
+  console.log(`Express running → PORT ${server.address().port}`);
+});
