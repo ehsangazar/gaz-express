@@ -16,7 +16,9 @@ describe("TaskQueueService", () => {
   it("should have emit and listen", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     const flowServiceObj = new FlowManagerService(
       eventServiceObj,
@@ -30,7 +32,9 @@ describe("TaskQueueService", () => {
   it("should work with whenCalculator", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     const flowServiceObj = new FlowManagerService(
       eventServiceObj,
@@ -49,7 +53,9 @@ describe("TaskQueueService", () => {
   it("should listen", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     eventServiceObj.on = jest.fn();
     const flowServiceObj = new FlowManagerService(
@@ -64,7 +70,9 @@ describe("TaskQueueService", () => {
   it("should listen after emit socksPurchased", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     emailQueueServiceObj.push = jest.fn();
     const flowServiceObj = new FlowManagerService(
@@ -80,7 +88,9 @@ describe("TaskQueueService", () => {
   it("should listen to emit websiteSignup", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     taskQueueServiceObj.push = jest.fn();
     const flowServiceObj = new FlowManagerService(
@@ -96,7 +106,9 @@ describe("TaskQueueService", () => {
   it("should listen to after emit socksPurchased", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     const flowServiceObj = new FlowManagerService(
       eventServiceObj,

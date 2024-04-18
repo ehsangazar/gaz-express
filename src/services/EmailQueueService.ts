@@ -5,12 +5,12 @@ interface Item {}
 
 class EmailQueueService {
   private items: Item[];
-  private emailServiceObj: EmailService;
+  private callToFunction: (item: Item) => Promise<boolean>;
   public started: boolean = false;
 
-  constructor(emailServiceObj: EmailService) {
+  constructor(callToFunction: (item: Item) => Promise<boolean>) {
     this.items = [];
-    this.emailServiceObj = emailServiceObj;
+    this.callToFunction = callToFunction;
   }
   push(item: Item) {
     this.items.push(item);
@@ -37,7 +37,7 @@ class EmailQueueService {
         this.loopProcessing();
         return;
       }
-      const response = await this.emailServiceObj.sendEmail(item);
+      const response = await this.callToFunction(item);
       if (response) this.shift();
       this.loopProcessing();
     }

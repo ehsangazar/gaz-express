@@ -10,7 +10,9 @@ describe("TaskQueueService", () => {
   });
   it("should be a function", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     expect(typeof taskQueueServiceObj.push).toBe("function");
     expect(typeof taskQueueServiceObj.shift).toBe("function");
@@ -19,7 +21,9 @@ describe("TaskQueueService", () => {
 
   it("should be able to push", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     taskQueueServiceObj.push({
       executionTimestamp: 1,
@@ -32,7 +36,9 @@ describe("TaskQueueService", () => {
 
   it("should sort the queue", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     taskQueueServiceObj.push({
       executionTimestamp: 10,
@@ -51,7 +57,9 @@ describe("TaskQueueService", () => {
 
   it("should be able to start/stop", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     taskQueueServiceObj.push({
       executionTimestamp: 1,
@@ -67,7 +75,9 @@ describe("TaskQueueService", () => {
 
   it("should finish the stack", async () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     emailQueueServiceObj.push = jest.fn(async () => true);
     taskQueueServiceObj.push({
@@ -83,7 +93,9 @@ describe("TaskQueueService", () => {
   });
   it("should not be able to finish because time has not reached", async () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const emailQueueServiceObj = new EmailQueueService(
+      emailServiceObj.sendEmail
+    );
     const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
     emailQueueServiceObj.push = jest.fn(async () => true);
     taskQueueServiceObj.push({
