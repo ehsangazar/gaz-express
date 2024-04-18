@@ -4,13 +4,13 @@ describe("EventService", () => {
   it("should be a function", () => {
     expect(typeof EventService).toBe("function");
   });
-  it("should be a function", () => {
+  it("should have emit and on", () => {
     const eventServiceObj = new EventService();
     expect(typeof eventServiceObj.emit).toBe("function");
     expect(typeof eventServiceObj.on).toBe("function");
   });
 
-  it("should be a function", () => {
+  it("should listen and emit an event", () => {
     const eventServiceObj = new EventService();
     let test = 1;
     eventServiceObj.on("test", () => {
