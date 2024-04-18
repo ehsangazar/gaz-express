@@ -1,3 +1,4 @@
+import config from "../config/config";
 import EmailService from "./EmailService";
 
 interface Item {}
@@ -26,7 +27,7 @@ class EmailQueueService {
   private loopProcessing() {
     setTimeout(() => {
       this.processing();
-    }, 2000);
+    }, config.DELAY_QUEUE_EMAIL);
   }
 
   private async processing() {
