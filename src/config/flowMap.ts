@@ -16,8 +16,7 @@ const flowMap = {
   websiteSignup: {
     type: "scheduled",
     when: {
-      seconds: 10,
-      // hours: 2,
+      hours: 2,
     },
     subject: "Welcome!",
     body: "Thanks to join our website",

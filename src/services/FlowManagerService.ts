@@ -42,8 +42,8 @@ class FlowManagerService {
     Object.keys(this.flowMap).map((eventName) => {
       const flow = this.flowMap[eventName];
       this.eventServiceObj.on(eventName, (userEmail) => {
-        switch (eventName) {
-          case "websiteSignup":
+        switch (flow.type) {
+          case "scheduled":
             this.taskQueueServiceObj.push({
               userEmail,
               subject: flow.subject,
@@ -51,8 +51,7 @@ class FlowManagerService {
               executionTimestamp: this.whenCalculator(flow.when),
             });
             break;
-          case "socksDispatched":
-          case "socksPurchased":
+          case "now":
             this.emailQueueServiceObj.push({
               userEmail,
               subject: flow.subject,
