@@ -58,6 +58,13 @@ class FlowManagerService {
               subject: flow.subject,
               body: flow.body,
             });
+            break;
+        }
+
+        if (flow.after) {
+          flow.after.map((afterEventName) => {
+            this.emit(afterEventName, userEmail);
+          });
         }
       });
     });

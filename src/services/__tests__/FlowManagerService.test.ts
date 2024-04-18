@@ -1,9 +1,9 @@
+import mockFlowMap from "../../../mock/mockFlowMap";
 import EmailQueueService from "../EmailQueueService";
 import EmailService from "../EmailService";
 import EventService from "../EventService";
 import FlowManagerService from "../FlowManagerService";
 import TaskQueueService from "../TaskQueueService";
-import flowMap from "../../config/flowMap";
 
 jest.useFakeTimers().setSystemTime(new Date("2020-01-01"));
 jest.mock("../EmailService");
@@ -22,7 +22,7 @@ describe("TaskQueueService", () => {
       eventServiceObj,
       emailQueueServiceObj,
       taskQueueServiceObj,
-      flowMap
+      mockFlowMap
     );
     expect(typeof flowServiceObj.emit).toBe("function");
     expect(typeof flowServiceObj.listen).toBe("function");
@@ -36,7 +36,7 @@ describe("TaskQueueService", () => {
       eventServiceObj,
       emailQueueServiceObj,
       taskQueueServiceObj,
-      flowMap
+      mockFlowMap
     );
     expect(
       flowServiceObj.whenCalculator({
@@ -56,7 +56,7 @@ describe("TaskQueueService", () => {
       eventServiceObj,
       emailQueueServiceObj,
       taskQueueServiceObj,
-      flowMap
+      mockFlowMap
     );
     flowServiceObj.listen();
     expect(eventServiceObj.on).toHaveBeenCalled();
@@ -71,13 +71,13 @@ describe("TaskQueueService", () => {
       eventServiceObj,
       emailQueueServiceObj,
       taskQueueServiceObj,
-      flowMap
+      mockFlowMap
     );
     flowServiceObj.listen();
     flowServiceObj.emit("socksPurchased", "me@gazar.dev");
     expect(emailQueueServiceObj.push).toHaveBeenCalled();
   });
-  it("should listen after emit websiteSignup", () => {
+  it("should listen to emit websiteSignup", () => {
     const eventServiceObj = new EventService();
     const emailServiceObj = new EmailService();
     const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
@@ -87,10 +87,26 @@ describe("TaskQueueService", () => {
       eventServiceObj,
       emailQueueServiceObj,
       taskQueueServiceObj,
-      flowMap
+      mockFlowMap
     );
     flowServiceObj.listen();
     flowServiceObj.emit("websiteSignup", "me@gazar.dev");
     expect(taskQueueServiceObj.push).toHaveBeenCalled();
+  });
+  it("should listen to after emit socksPurchased", () => {
+    const eventServiceObj = new EventService();
+    const emailServiceObj = new EmailService();
+    const emailQueueServiceObj = new EmailQueueService(emailServiceObj);
+    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const flowServiceObj = new FlowManagerService(
+      eventServiceObj,
+      emailQueueServiceObj,
+      taskQueueServiceObj,
+      mockFlowMap
+    );
+    flowServiceObj.emit = jest.fn();
+    flowServiceObj.listen();
+    flowServiceObj.emit("socksPurchased", "me@gazar.dev");
+    expect(flowServiceObj.emit).toHaveBeenCalled();
   });
 });

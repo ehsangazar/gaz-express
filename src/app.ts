@@ -22,3 +22,4 @@ emailQueueServiceObj.start();
 taskQueueServiceObj.start();
 
 flowServiceObj.emit("websiteSignup", "me@gazar.dev");
+flowServiceObj.emit("socksPurchased", "me@gazar.dev");

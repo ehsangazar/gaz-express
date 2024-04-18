@@ -1,18 +1,4 @@
-export type IflowMap = {
-  [key: string]: {
-    type: string;
-    when: {
-      seconds: string;
-      minutes: string;
-      hours: string;
-    };
-    subject: string;
-    body: string;
-    after?: string[];
-  };
-};
-
-const flowMap = {
+const mockFlowMap = {
   websiteSignup: {
     type: "scheduled",
     when: {
@@ -35,4 +21,4 @@ const flowMap = {
   },
 };
 
-export default flowMap;
+export default mockFlowMap;
