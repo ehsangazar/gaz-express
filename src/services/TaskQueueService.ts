@@ -41,6 +41,10 @@ class TaskQueueService {
   private async processing() {
     if (this.start) {
       const item = this.items[0];
+      if (!item) {
+        this.loopProcessing();
+        return;
+      }
       if (item.executionTimestamp > Date.now()) {
         this.loopProcessing();
         return;
