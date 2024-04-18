@@ -11,7 +11,7 @@ class EmailQueueService {
     this.items = [];
     this.emailServiceObj = emailServiceObj;
   }
-  add(item: Item) {
+  push(item: Item) {
     this.items.push(item);
   }
 
