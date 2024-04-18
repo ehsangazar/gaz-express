@@ -4,7 +4,7 @@ import { catchErrors } from "../utils/errorHandler";
 
 const routes = express.Router();
 
-routes.get("/", catchErrors(controller));
-routes.post("/event", catchErrors(controller));
+routes.get("/", catchErrors(controller.main));
+routes.post("/event", catchErrors(controller.event));
 
 export default routes;
