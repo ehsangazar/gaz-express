@@ -10,10 +10,12 @@ describe("TaskQueueService", () => {
   });
   it("should be a function", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
-    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
+    const taskQueueServiceObj = new TaskQueueService({
+      callToFunction: emailQueueServiceObj.push,
+    });
     expect(typeof taskQueueServiceObj.push).toBe("function");
     expect(typeof taskQueueServiceObj.shift).toBe("function");
     expect(typeof taskQueueServiceObj.list).toBe("function");
@@ -21,10 +23,12 @@ describe("TaskQueueService", () => {
 
   it("should be able to push", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
-    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
+    const taskQueueServiceObj = new TaskQueueService({
+      callToFunction: emailQueueServiceObj.push,
+    });
     taskQueueServiceObj.push({
       executionTimestamp: 1,
       userEmail: "me@gazar.dev",
@@ -36,10 +40,12 @@ describe("TaskQueueService", () => {
 
   it("should sort the queue", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
-    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
+    const taskQueueServiceObj = new TaskQueueService({
+      callToFunction: emailQueueServiceObj.push,
+    });
     taskQueueServiceObj.push({
       executionTimestamp: 10,
       userEmail: "me@gazar.dev",
@@ -57,10 +63,12 @@ describe("TaskQueueService", () => {
 
   it("should be able to start/stop", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
-    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
+    const taskQueueServiceObj = new TaskQueueService({
+      callToFunction: emailQueueServiceObj.push,
+    });
     taskQueueServiceObj.push({
       executionTimestamp: 1,
       userEmail: "me@gazar.dev",
@@ -75,11 +83,13 @@ describe("TaskQueueService", () => {
 
   it("should finish the stack", async () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
-    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.push = jest.fn(async () => true);
+    const taskQueueServiceObj = new TaskQueueService({
+      callToFunction: emailQueueServiceObj.push,
+    });
     taskQueueServiceObj.push({
       userEmail: "me@gazar.dev",
       subject: "test",
@@ -93,11 +103,13 @@ describe("TaskQueueService", () => {
   });
   it("should not be able to finish because time has not reached", async () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
-    const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.push = jest.fn(async () => true);
+    const taskQueueServiceObj = new TaskQueueService({
+      callToFunction: emailQueueServiceObj.push,
+    });
     taskQueueServiceObj.push({
       userEmail: "me@gazar.dev",
       subject: "test",

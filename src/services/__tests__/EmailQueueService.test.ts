@@ -8,9 +8,9 @@ describe("EmailQueueService", () => {
   });
   it("should be a function", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     expect(typeof emailQueueServiceObj.push).toBe("function");
     expect(typeof emailQueueServiceObj.shift).toBe("function");
     expect(typeof emailQueueServiceObj.list).toBe("function");
@@ -18,18 +18,18 @@ describe("EmailQueueService", () => {
 
   it("should be able to push", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.push(1);
     expect(emailQueueServiceObj.list().length).toBe(1);
   });
 
   it("should shift the first item", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.push(10);
     emailQueueServiceObj.push(1);
     expect(emailQueueServiceObj.shift()).toBe(10);
@@ -37,9 +37,9 @@ describe("EmailQueueService", () => {
 
   it("should start/stop the process", () => {
     const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.start();
     expect(emailQueueServiceObj.started).toBe(true);
     emailQueueServiceObj.stop();
@@ -49,9 +49,9 @@ describe("EmailQueueService", () => {
   it("should finish the stack", async () => {
     const emailServiceObj = new EmailService();
     emailServiceObj.sendEmail = jest.fn(async () => true);
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.push(1);
     emailQueueServiceObj.start();
     await new Promise((r) => setTimeout(r, 10));
@@ -61,9 +61,9 @@ describe("EmailQueueService", () => {
   it("should finish push an item back to stack", async () => {
     const emailServiceObj = new EmailService();
     emailServiceObj.sendEmail = jest.fn(async () => false);
-    const emailQueueServiceObj = new EmailQueueService(
-      emailServiceObj.sendEmail
-    );
+    const emailQueueServiceObj = new EmailQueueService({
+      callToFunction: emailServiceObj.sendEmail,
+    });
     emailQueueServiceObj.push(1);
     emailQueueServiceObj.start();
     await new Promise((r) => setTimeout(r, 100));

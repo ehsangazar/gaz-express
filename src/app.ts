@@ -7,8 +7,12 @@ import flowMap from "./config/flowMap";
 
 const eventServiceObj = new EventService();
 const emailServiceObj = new EmailService();
-const emailQueueServiceObj = new EmailQueueService(emailServiceObj.sendEmail);
-const taskQueueServiceObj = new TaskQueueService(emailQueueServiceObj);
+const emailQueueServiceObj = new EmailQueueService({
+  callToFunction: emailServiceObj.sendEmail,
+});
+const taskQueueServiceObj = new TaskQueueService({
+  callToFunction: emailQueueServiceObj.push,
+});
 
 const flowServiceObj = new FlowManagerService(
   eventServiceObj,

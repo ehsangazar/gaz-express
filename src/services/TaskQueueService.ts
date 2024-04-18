@@ -1,5 +1,4 @@
 import config from "../config/config";
-import EmailQueueService from "./EmailQueueService";
 
 interface Item {
   executionTimestamp: number;
@@ -11,11 +10,11 @@ interface Item {
 class TaskQueueService {
   private items: Item[];
   public started: boolean = false;
-  private emailQueueServiceObj: EmailQueueService;
+  private callToFunction: (item: Item) => void;
 
-  constructor(emailQueueServiceObj) {
+  constructor({ callToFunction }: { callToFunction: (item: Item) => void }) {
     this.items = [];
-    this.emailQueueServiceObj = emailQueueServiceObj;
+    this.callToFunction = callToFunction;
   }
   push(item: Item) {
     this.items.push(item);
@@ -49,7 +48,7 @@ class TaskQueueService {
         this.loopProcessing();
         return;
       }
-      await this.emailQueueServiceObj.push(item);
+      await this.callToFunction(item);
       this.shift();
       this.loopProcessing();
     }

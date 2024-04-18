@@ -1,5 +1,4 @@
 import config from "../config/config";
-import EmailService from "./EmailService";
 
 interface Item {}
 
@@ -8,7 +7,11 @@ class EmailQueueService {
   private callToFunction: (item: Item) => Promise<boolean>;
   public started: boolean = false;
 
-  constructor(callToFunction: (item: Item) => Promise<boolean>) {
+  constructor({
+    callToFunction,
+  }: {
+    callToFunction: (item: Item) => Promise<boolean>;
+  }) {
     this.items = [];
     this.callToFunction = callToFunction;
   }
