@@ -53,7 +53,7 @@ curl --location 'localhost:3000/event' \
 
 Before diving into the codebase, it's recommended to review the provided MindMap diagram, which offers a clear overview of the project structure and components.
 
-![Diagram](https://raw.githubusercontent.com/ehsangazar/healthtech/main/docs/diagram.png?token=GHSAT0AAAAAACN4PL2BXCIHXBGCVFEDZ77WZRCKP7A)
+![Diagram](https://github.com/ehsangazar/healthtech/blob/main/docs/diagram.png?raw=true)
 
 Key Components:
 
