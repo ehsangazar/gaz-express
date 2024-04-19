@@ -15,11 +15,19 @@ class TaskQueueService {
     this.items = [];
     this.callToFunction = callToFunction;
   }
+
   push(item: Item) {
-    this.items.push(item);
-    this.items = this.items.sort((a, b) => {
-      return a.executionTimestamp - b.executionTimestamp;
-    });
+    let low = 0;
+    let high = this.items.length;
+    while (low < high) {
+      const mid = Math.floor((low + high) / 2);
+      if (this.items[mid].executionTimestamp < item.executionTimestamp) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    this.items.splice(low, 0, item);
   }
 
   shift() {
