@@ -1,31 +1,44 @@
-## HealthTech Mail Scheduler
+## Mail Scheduler
 
-This is a project based on the requirement listed below, to create a mail scheduler.
-[Documentation](https://healthtech1.notion.site/Healthtech-1-Engineer-Take-Home-Test-7a0cf51aa622466eb851763ebc4bf2e6)
+### Overview
 
-## How To Install and Develop
+This project is a mail scheduler designed to handle various email-related tasks, including scheduling and sending emails based on predefined events. It provides a simple yet efficient solution for managing email communication in your application. [Read More](https://healthtech1.notion.site/Healthtech-1-Engineer-Take-Home-Test-7a0cf51aa622466eb851763ebc4bf2e6)
 
-First clone the project and then run
+### Installation and Development
+
+To get started with the project, follow these steps:
+
+1. Clone this repository
+
+```
+git clone https://github.com/ehsangazar/healthtech
+```
+
+2. Install dependencies:
 
 ```
 npm install
 ```
 
-then you should be set to run
+3. Start the development server:
 
 ```
 npm run dev
 ```
 
-## How to Production
+### Production Deployment
+
+For production deployment, use the following command:
 
 ```
 npm run start
 ```
 
-## Routes
+### Usage
 
-There is a route exposed in this project which you can send request to like:
+The project exposes a route that accepts requests for scheduling emails. You can send a request using tools like cURL, providing the event name and user email address in the request body.
+
+Example cURL request:
 
 ```
 curl --location 'localhost:3000/event' \
@@ -36,16 +49,20 @@ curl --location 'localhost:3000/event' \
 }'
 ```
 
-## Technical Notes
+### Technical Notes
 
-Pretty easy to understand
-MindMap before coding:
+Before diving into the codebase, it's recommended to review the provided MindMap diagram, which offers a clear overview of the project structure and components.
+
 ![Diagram](https://raw.githubusercontent.com/ehsangazar/healthtech/main/docs/diagram.png?token=GHSAT0AAAAAACN4PL2BXCIHXBGCVFEDZ77WZRCKP7A)
 
-- EmailQueueService: simple queue
-- EmailService: to send emails
-- EventService: to use 'EventEmitter' for event driven approach
-- FlowManagerService: to handle the flows
-- TaskQueueService: Database with sort for tasks which they are scheduled
+Key Components:
 
-##### Author: Ehsan Gazar (me@gazar.dev)
+- <b>EmailQueueService</b>: Manages a simple queue for email tasks.
+- <b>EmailService</b>: Handles the sending of emails.
+- <b>EventService</b>: Utilizes 'EventEmitter' for implementing an event-driven approach.
+- <b>FlowManagerService</b>: Responsible for orchestrating the various flows within the application.
+- <b>TaskQueueService</b>: Utilizes a database with sorting capabilities for managing scheduled tasks.
+
+### Author
+
+This project was developed by @ehsangazar. Feel free to reach out for any questions or feedback.
