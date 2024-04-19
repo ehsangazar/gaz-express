@@ -40,7 +40,7 @@ curl --location 'localhost:3000/event' \
 
 Pretty easy to understand
 MindMap before coding:
-![Diagram](https://github.com/ehsangazar/healthtech/blob/main/data/diagram.png)
+![Diagram](https://raw.githubusercontent.com/ehsangazar/healthtech/main/docs/diagram.png?token=GHSAT0AAAAAACN4PL2BXCIHXBGCVFEDZ77WZRCKP7A)
 
 - EmailQueueService: simple queue
 - EmailService: to send emails
