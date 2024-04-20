@@ -1,8 +1,5 @@
 import EmailQueueService from "../EmailQueueService";
-import EmailService from "../EmailService";
 
-jest.mock("../EmailService");
-describe("EmailQueueService", () => {
   it("should be a function", () => {
     expect(typeof EmailQueueService).toBe("function");
   });
