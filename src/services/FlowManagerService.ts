@@ -43,8 +43,8 @@ class FlowManagerService {
       if (!this.emailQueueServiceObj.isEmpty()) {
         const item = this.emailQueueServiceObj.dequeue();
         const reponse = await this.emailServiceObj.sendEmail(item);
-        if (reponse && item.next) {
-          item.next.map((next) => {
+        if (reponse) {
+          item.next?.map((next) => {
             this.emit(next, item.userEmail);
           });
         } else {
