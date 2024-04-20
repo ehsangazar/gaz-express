@@ -1,27 +1,28 @@
-class EmailQueueService<T> {
-  private items: T[];
+class EmailQueueService {
+  private queue: any[];
+
   constructor() {
-    this.items = [];
+    this.queue = [];
   }
 
-  enqueue(item: T): void {
-    this.items.push(item);
+  public enqueue(item) {
+    this.queue.push(item);
   }
 
-  dequeue(): T | undefined {
-    return this.items.shift();
+  public dequeue() {
+    return this.queue.shift();
   }
 
-  isEmpty(): boolean {
-    return this.items.length === 0;
+  public isEmpty() {
+    return this.queue.length === 0;
   }
 
-  size(): number {
-    return this.items.length;
+  public size() {
+    return this.queue.length;
   }
 
-  clear(): void {
-    this.items = [];
+  public clear() {
+    this.queue = [];
   }
 }
 
