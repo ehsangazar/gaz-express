@@ -1,5 +1,6 @@
 import EmailQueueService from "../EmailQueueService";
 
+describe("EmailQueueService", () => {
   it("should be a function", () => {
     expect(typeof EmailQueueService).toBe("function");
   });
