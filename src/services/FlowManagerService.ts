@@ -63,7 +63,7 @@ class FlowManagerService {
       if (!this.taskQueueServiceObj.isEmpty()) {
         const item = this.taskQueueServiceObj.peek();
         if (item && item.executionTime < new Date().getTime()) {
-          this.taskQueueServiceObj.dequeue();
+          this.taskQueueServiceObj.extractMin();
           this.emailQueueServiceObj.enqueue(item.data);
         }
       }
@@ -78,7 +78,7 @@ class FlowManagerService {
       const flow = this.flowMap[eventName];
       this.eventServiceObj.on(eventName, (userEmail) => {
         const executionTime = this.whenCalculator(flow.when);
-        this.taskQueueServiceObj.enqueue({
+        this.taskQueueServiceObj.insert({
           executionTime,
           data: {
             userEmail,

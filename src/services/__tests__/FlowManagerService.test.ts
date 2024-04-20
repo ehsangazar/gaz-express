@@ -46,10 +46,10 @@ describe("FlowManagerService", () => {
     expect(flowServiceObj.eventServiceObj.on).toHaveBeenCalled();
   });
   it("should listen after emit socksPurchased", () => {
-    flowServiceObj.taskQueueServiceObj.enqueue = jest.fn();
+    flowServiceObj.taskQueueServiceObj.insert = jest.fn();
     flowServiceObj.listen();
     flowServiceObj.emit("socksPurchased", "me@gazar.dev");
-    expect(flowServiceObj.taskQueueServiceObj.enqueue).toHaveBeenCalled();
+    expect(flowServiceObj.taskQueueServiceObj.insert).toHaveBeenCalled();
     flowServiceObj.stop();
   });
   it("should listen to emit websiteSignup and isEmpty to be called", async () => {
@@ -64,10 +64,10 @@ describe("FlowManagerService", () => {
     flowServiceObj.emailServiceObj.sendEmail = jest.fn(async () => true);
     flowServiceObj.listen();
     flowServiceObj.emit("websiteSignup", "me@gazar.dev");
-    expect(flowServiceObj.taskQueueServiceObj.size()).toBe(1);
+    expect(flowServiceObj.taskQueueServiceObj.getLength()).toBe(1);
     jest.runAllTimers();
     await Promise.resolve();
-    expect(flowServiceObj.taskQueueServiceObj.size()).toBe(0);
+    expect(flowServiceObj.taskQueueServiceObj.getLength()).toBe(0);
     jest.runAllTimers();
     expect(flowServiceObj.emailQueueServiceObj.size()).toBe(1);
     await Promise.resolve();
@@ -77,7 +77,7 @@ describe("FlowManagerService", () => {
     flowServiceObj.emailServiceObj.sendEmail = jest.fn(async () => true);
     flowServiceObj.listen();
     flowServiceObj.emit("socksPurchased", "me@gazar.dev");
-    expect(flowServiceObj.taskQueueServiceObj.size()).toBe(1);
+    expect(flowServiceObj.taskQueueServiceObj.getLength()).toBe(1);
     jest.runAllTimers();
     await Promise.resolve();
     jest.runAllTimers();
@@ -93,7 +93,7 @@ describe("FlowManagerService", () => {
     flowServiceObj.emailServiceObj.sendEmail = jest.fn(async () => false);
     flowServiceObj.listen();
     flowServiceObj.emit("socksDispatched", "me@gazar.dev");
-    expect(flowServiceObj.taskQueueServiceObj.size()).toBe(1);
+    expect(flowServiceObj.taskQueueServiceObj.getLength()).toBe(1);
     jest.runAllTimers();
     await Promise.resolve();
     jest.runAllTimers();

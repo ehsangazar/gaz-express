@@ -9,51 +9,47 @@ describe("TaskQueueService", () => {
     expect(typeof TaskQueueService).toBe("function");
   });
   it("should be a function", () => {
-    expect(typeof taskQueueServiceObj.enqueue).toBe("function");
-    expect(typeof taskQueueServiceObj.dequeue).toBe("function");
-    expect(typeof taskQueueServiceObj.size).toBe("function");
+    expect(typeof taskQueueServiceObj.insert).toBe("function");
+    expect(typeof taskQueueServiceObj.extractMin).toBe("function");
+    expect(typeof taskQueueServiceObj.getLength).toBe("function");
   });
 
   it("should be able to enqueue", () => {
-    taskQueueServiceObj.enqueue({
+    taskQueueServiceObj.insert({
       executionTime: 1,
       data: {
         userEmail: "me@gazar.dev",
       },
     });
-    expect(taskQueueServiceObj.size()).toBe(1);
+    expect(taskQueueServiceObj.getLength()).toBe(1);
   });
 
   it("should sort the queue", () => {
-    taskQueueServiceObj.enqueue({
+    taskQueueServiceObj.insert({
       executionTime: 10,
       data: {
         userEmail: "me@gazar.dev",
       },
     });
-    taskQueueServiceObj.enqueue({
+    taskQueueServiceObj.insert({
       executionTime: 1,
       data: {
         userEmail: "me@gazar.dev",
       },
     });
-    taskQueueServiceObj.enqueue({
+    taskQueueServiceObj.insert({
       executionTime: 4,
       data: {
         userEmail: "me@gazar.dev",
       },
     });
-    expect(taskQueueServiceObj.dequeue().executionTime).toBe(1);
-    expect(taskQueueServiceObj.dequeue().executionTime).toBe(4);
-    expect(taskQueueServiceObj.dequeue().executionTime).toBe(10);
-  });
-
-  it("should return undefined if queue is empty", () => {
-    expect(taskQueueServiceObj.dequeue()).toBe(undefined);
+    expect(taskQueueServiceObj.extractMin().executionTime).toBe(1);
+    expect(taskQueueServiceObj.extractMin().executionTime).toBe(4);
+    expect(taskQueueServiceObj.extractMin().executionTime).toBe(10);
   });
 
   it("should return the first item", () => {
-    taskQueueServiceObj.enqueue({
+    taskQueueServiceObj.insert({
       executionTime: 10,
       data: {
         userEmail: "me@gazar.dev",
