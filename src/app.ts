@@ -17,7 +17,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const flowManager = new FlowManagerService(flowMap);
 flowManager.listen();
-flowManager.start();
 
 app.use(
   pinoHttp({

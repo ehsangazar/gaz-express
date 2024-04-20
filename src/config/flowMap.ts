@@ -1,6 +1,5 @@
 export type IflowMap = {
   [key: string]: {
-    type: string;
     when?: {
       seconds?: number;
       minutes?: number;
@@ -14,23 +13,20 @@ export type IflowMap = {
 
 const flowMap = {
   websiteSignup: {
-    type: "scheduled",
     when: {
-      hours: 2,
+      seconds: 5,
     },
     subject: "Welcome!",
     body: "Thanks to join our website",
   },
   socksDispatched: {
-    type: "now",
     subject: "Dispatched!",
     body: "Thanks, your item has been dispatched",
   },
   socksPurchased: {
-    type: "now",
     subject: "Purchased!",
     body: "Thanks for shopping with us",
-    after: ["socksDispatched"],
+    next: ["socksDispatched"],
   },
 };
 

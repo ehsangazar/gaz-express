@@ -3,83 +3,113 @@ import EmailQueueService from "./EmailQueueService";
 import TaskQueueService from "./TaskQueueService";
 import { IflowMap } from "../config/flowMap";
 import EmailService from "./EmailService";
+import config from "../config/config";
 
 class FlowManagerService {
   public eventServiceObj: EventService;
   public emailServiceObj: EmailService;
   public emailQueueServiceObj: EmailQueueService;
   public taskQueueServiceObj: TaskQueueService;
-  public flowMap: IflowMap;
+  private flowMap: IflowMap;
+  private startedEmailQueueService: boolean = false;
+  private startedTaskQueueService: boolean = false;
+
   constructor(flowMap: IflowMap) {
     this.eventServiceObj = new EventService();
     this.emailServiceObj = new EmailService();
-    this.emailQueueServiceObj = new EmailQueueService({
-      callToFunction: this.sendEmail.bind(this),
-    });
-    this.taskQueueServiceObj = new TaskQueueService({
-      callToFunction: this.pushToEmailQueueService.bind(this),
-    });
+    this.emailQueueServiceObj = new EmailQueueService();
+    this.taskQueueServiceObj = new TaskQueueService();
     this.flowMap = flowMap;
-  }
-
-  async sendEmail(item) {
-    const response = await this.emailServiceObj.sendEmail(item);
-    if (response && item.after?.length) {
-      item.after.map((singleEvent) => {
-        this.emit(singleEvent, item.userEmail);
-      });
-    }
-    return response;
-  }
-
-  pushToEmailQueueService(item) {
-    this.emailQueueServiceObj.push(item);
   }
 
   emit(eventName: string, userEmail: string) {
     this.eventServiceObj.emit(eventName, userEmail);
   }
 
-  public whenCalculator(when) {
-    let time = Date.now();
-    if (when.seconds) {
-      time += when.seconds * 1000;
+  whenCalculator(when) {
+    const now = Date.now();
+    if (!when) return now;
+    return (
+      now +
+      (when.seconds || 0) * 1000 +
+      (when.minutes || 0) * 60 * 1000 +
+      (when.hours || 0) * 60 * 60 * 1000
+    );
+  }
+
+  async processEmailQueue() {
+    this.startedEmailQueueService = true;
+    while (this.startedEmailQueueService) {
+      if (!this.emailQueueServiceObj.isEmpty()) {
+        const item = this.emailQueueServiceObj.dequeue();
+        const reponse = await this.emailServiceObj.sendEmail(item);
+        if (reponse && item.next) {
+          item.next.map((next) => {
+            this.emit(next, item.userEmail);
+          });
+        } else {
+          this.emailQueueServiceObj.enqueue(item);
+        }
+      }
+      await new Promise((resolve) =>
+        setTimeout(resolve, config.DELAY_QUEUE_EMAIL)
+      );
     }
-    if (when.minutes) {
-      time += when.minutes * 60 * 1000;
+  }
+
+  async processTaskQueue() {
+    this.startedTaskQueueService = true;
+    while (this.startedTaskQueueService) {
+      if (!this.taskQueueServiceObj.isEmpty()) {
+        const item = this.taskQueueServiceObj.peek();
+        if (item && item.executionTime < new Date().getTime()) {
+          this.taskQueueServiceObj.dequeue();
+          this.emailQueueServiceObj.enqueue(item.data);
+        }
+      }
+      await new Promise((resolve) =>
+        setTimeout(resolve, config.DELAY_QUEUE_TASK)
+      );
     }
-    if (when.hours) {
-      time += when.hours * 60 * 60 * 1000;
-    }
-    return time;
   }
 
   listen() {
     Object.keys(this.flowMap).map((eventName) => {
       const flow = this.flowMap[eventName];
       this.eventServiceObj.on(eventName, (userEmail) => {
-        switch (flow.type) {
-          case "scheduled":
-            this.taskQueueServiceObj.push({
-              userEmail,
-              executionTimestamp: this.whenCalculator(flow.when),
-              ...flow,
-            });
-            break;
-          case "now":
-            this.emailQueueServiceObj.push({
-              userEmail,
-              ...flow,
-            });
-            break;
-        }
+        const executionTime = this.whenCalculator(flow.when);
+        this.taskQueueServiceObj.enqueue({
+          executionTime,
+          data: {
+            userEmail,
+            ...flow,
+          },
+        });
       });
     });
+    this.processEmailQueue();
+    this.processTaskQueue();
   }
 
-  start() {
-    this.emailQueueServiceObj.start();
-    this.taskQueueServiceObj.start();
+  stopEmailQueueService() {
+    this.startedEmailQueueService = false;
+  }
+
+  stopTaskQueueService() {
+    this.startedTaskQueueService = false;
+  }
+
+  stop() {
+    this.stopEmailQueueService();
+    this.stopTaskQueueService();
+  }
+
+  startProcessEmailQueue() {
+    this.processEmailQueue();
+  }
+
+  startProcessTaskQueue() {
+    this.processTaskQueue();
   }
 }
 
