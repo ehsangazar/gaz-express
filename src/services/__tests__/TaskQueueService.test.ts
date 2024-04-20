@@ -1,18 +1,20 @@
 import TaskQueueService from "../TaskQueueService";
 
 describe("TaskQueueService", () => {
+  let taskQueueServiceObj: TaskQueueService;
+  beforeEach(() => {
+    taskQueueServiceObj = new TaskQueueService();
+  });
   it("should be a function", () => {
     expect(typeof TaskQueueService).toBe("function");
   });
   it("should be a function", () => {
-    const taskQueueServiceObj = new TaskQueueService();
     expect(typeof taskQueueServiceObj.enqueue).toBe("function");
     expect(typeof taskQueueServiceObj.dequeue).toBe("function");
     expect(typeof taskQueueServiceObj.size).toBe("function");
   });
 
   it("should be able to enqueue", () => {
-    const taskQueueServiceObj = new TaskQueueService();
     taskQueueServiceObj.enqueue({
       executionTime: 1,
       data: {
@@ -23,7 +25,6 @@ describe("TaskQueueService", () => {
   });
 
   it("should sort the queue", () => {
-    const taskQueueServiceObj = new TaskQueueService();
     taskQueueServiceObj.enqueue({
       executionTime: 10,
       data: {
@@ -48,12 +49,10 @@ describe("TaskQueueService", () => {
   });
 
   it("should return undefined if queue is empty", () => {
-    const taskQueueServiceObj = new TaskQueueService();
     expect(taskQueueServiceObj.dequeue()).toBe(undefined);
   });
 
   it("should return the first item", () => {
-    const taskQueueServiceObj = new TaskQueueService();
     taskQueueServiceObj.enqueue({
       executionTime: 10,
       data: {
