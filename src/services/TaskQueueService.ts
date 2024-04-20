@@ -1,72 +1,48 @@
-import config from "../config/config";
-
-interface Item {
-  userEmail: string;
-  executionTimestamp: number;
+interface Task {
+  executionTime: number;
+  data: any;
 }
 
 class TaskQueueService {
-  private items: Item[];
-  public started: boolean = false;
-  private callToFunction: (item: Item) => void;
+  private tasks: Task[];
 
-  constructor({ callToFunction }: { callToFunction: (item: Item) => void }) {
-    this.items = [];
-    this.callToFunction = callToFunction;
+  constructor() {
+    this.tasks = [];
   }
 
-  push(item: Item) {
+  private binarySearchIndex(item: Task) {
     let low = 0;
-    let high = this.items.length;
+    let high = this.tasks.length;
     while (low < high) {
       const mid = Math.floor((low + high) / 2);
-      if (this.items[mid].executionTimestamp < item.executionTimestamp) {
+      if (this.tasks[mid].executionTime < item.executionTime) {
         low = mid + 1;
       } else {
         high = mid;
       }
     }
-    this.items.splice(low, 0, item);
+    return low;
   }
 
-  shift() {
-    return this.items.shift();
+  enqueue(task: Task): void {
+    const index = this.binarySearchIndex(task);
+    this.tasks.splice(index, 0, task);
   }
 
-  list() {
-    return this.items;
+  dequeue(): Task | undefined {
+    return this.tasks.shift();
   }
 
-  private loopProcessing() {
-    setTimeout(() => {
-      this.processing();
-    }, config.DELAY_QUEUE_TASK);
+  peek(): Task | undefined {
+    return this.tasks[0];
   }
 
-  private async processing() {
-    if (this.start) {
-      const item = this.items[0];
-      if (!item) {
-        this.loopProcessing();
-        return;
-      }
-      if (item.executionTimestamp > Date.now()) {
-        this.loopProcessing();
-        return;
-      }
-      await this.callToFunction(item);
-      this.shift();
-      this.loopProcessing();
-    }
+  isEmpty(): boolean {
+    return this.tasks.length === 0;
   }
 
-  start() {
-    this.started = true;
-    this.processing();
-  }
-
-  stop() {
-    this.started = false;
+  size(): number {
+    return this.tasks.length;
   }
 }
 

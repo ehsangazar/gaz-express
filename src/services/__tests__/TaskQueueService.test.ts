@@ -1,112 +1,65 @@
-import EmailQueueService from "../EmailQueueService";
-import EmailService from "../EmailService";
 import TaskQueueService from "../TaskQueueService";
 
-jest.mock("../EmailService");
-jest.mock("../EmailQueueService");
 describe("TaskQueueService", () => {
   it("should be a function", () => {
     expect(typeof TaskQueueService).toBe("function");
   });
   it("should be a function", () => {
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    expect(typeof taskQueueServiceObj.push).toBe("function");
-    expect(typeof taskQueueServiceObj.shift).toBe("function");
-    expect(typeof taskQueueServiceObj.list).toBe("function");
+    const taskQueueServiceObj = new TaskQueueService();
+    expect(typeof taskQueueServiceObj.enqueue).toBe("function");
+    expect(typeof taskQueueServiceObj.dequeue).toBe("function");
+    expect(typeof taskQueueServiceObj.size).toBe("function");
   });
 
-  it("should be able to push", () => {
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
+  it("should be able to enqueue", () => {
+    const taskQueueServiceObj = new TaskQueueService();
+    taskQueueServiceObj.enqueue({
+      executionTime: 1,
+      data: {
+        userEmail: "me@gazar.dev",
+      },
     });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    taskQueueServiceObj.push({
-      executionTimestamp: 1,
-      userEmail: "me@gazar.dev",
-    });
-    expect(taskQueueServiceObj.list().length).toBe(1);
+    expect(taskQueueServiceObj.size()).toBe(1);
   });
 
   it("should sort the queue", () => {
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
+    const taskQueueServiceObj = new TaskQueueService();
+    taskQueueServiceObj.enqueue({
+      executionTime: 10,
+      data: {
+        userEmail: "me@gazar.dev",
+      },
     });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
+    taskQueueServiceObj.enqueue({
+      executionTime: 1,
+      data: {
+        userEmail: "me@gazar.dev",
+      },
     });
-    taskQueueServiceObj.push({
-      executionTimestamp: 10,
-      userEmail: "me@gazar.dev",
+    taskQueueServiceObj.enqueue({
+      executionTime: 4,
+      data: {
+        userEmail: "me@gazar.dev",
+      },
     });
-    taskQueueServiceObj.push({
-      executionTimestamp: 1,
-      userEmail: "me@gazar.dev",
-    });
-    expect(taskQueueServiceObj.shift().executionTimestamp).toBe(1);
+    expect(taskQueueServiceObj.dequeue().executionTime).toBe(1);
+    expect(taskQueueServiceObj.dequeue().executionTime).toBe(4);
+    expect(taskQueueServiceObj.dequeue().executionTime).toBe(10);
   });
 
-  it("should be able to start/stop", () => {
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    taskQueueServiceObj.push({
-      executionTimestamp: 1,
-      userEmail: "me@gazar.dev",
-    });
-    taskQueueServiceObj.start();
-    expect(taskQueueServiceObj.started).toBe(true);
-    taskQueueServiceObj.stop();
-    expect(taskQueueServiceObj.started).toBe(false);
+  it("should return undefined if queue is empty", () => {
+    const taskQueueServiceObj = new TaskQueueService();
+    expect(taskQueueServiceObj.dequeue()).toBe(undefined);
   });
 
-  it("should finish the stack", async () => {
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
+  it("should return the first item", () => {
+    const taskQueueServiceObj = new TaskQueueService();
+    taskQueueServiceObj.enqueue({
+      executionTime: 10,
+      data: {
+        userEmail: "me@gazar.dev",
+      },
     });
-    emailQueueServiceObj.push = jest.fn(async () => true);
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    taskQueueServiceObj.push({
-      userEmail: "me@gazar.dev",
-      executionTimestamp: Date.now(),
-    });
-    taskQueueServiceObj.start();
-    await new Promise((r) => setTimeout(r, 10));
-    expect(emailQueueServiceObj.push).toHaveBeenCalled();
-    expect(taskQueueServiceObj.list().length).toBe(0);
-  });
-  it("should not be able to finish because time has not reached", async () => {
-    const emailServiceObj = new EmailService();
-    const emailQueueServiceObj = new EmailQueueService({
-      callToFunction: emailServiceObj.sendEmail,
-    });
-    emailQueueServiceObj.push = jest.fn(async () => true);
-    const taskQueueServiceObj = new TaskQueueService({
-      callToFunction: emailQueueServiceObj.push,
-    });
-    taskQueueServiceObj.push({
-      userEmail: "me@gazar.dev",
-      executionTimestamp: Date.now() + 1000 * 60,
-    });
-    taskQueueServiceObj.start();
-    await new Promise((r) => setTimeout(r, 10));
-    expect(emailQueueServiceObj.push).not.toHaveBeenCalled();
-    expect(taskQueueServiceObj.list().length).toBe(1);
+    expect(taskQueueServiceObj.peek().executionTime).toBe(10);
   });
 });
