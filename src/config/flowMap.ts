@@ -12,21 +12,12 @@ export type IflowMap = {
 };
 
 const flowMap = {
-  websiteSignup: {
+  testEmail: {
     when: {
       seconds: 5,
     },
-    subject: "Welcome!",
-    body: "Thanks to join our website",
-  },
-  socksDispatched: {
-    subject: "Dispatched!",
-    body: "Thanks, your item has been dispatched",
-  },
-  socksPurchased: {
-    subject: "Purchased!",
-    body: "Thanks for shopping with us",
-    next: ["socksDispatched"],
+    subject: "Welcome To Gazar.dev",
+    body: "This is a test Email sent from Gazar.dev based on your request",
   },
 };
 

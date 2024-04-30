@@ -2,7 +2,7 @@
 
 ### Overview
 
-This project is a mail scheduler designed to handle various email-related tasks, including scheduling and sending emails based on predefined events. It provides a simple yet efficient solution for managing email communication in your application. [Read More](https://healthtech1.notion.site/Healthtech-1-Engineer-Take-Home-Test-7a0cf51aa622466eb851763ebc4bf2e6)
+This project is a mail scheduler designed to handle various email-related tasks, including scheduling and sending emails based on predefined events. It provides a simple yet efficient solution for managing email communication in your application.
 
 ### Installation and Development
 
@@ -11,7 +11,7 @@ To get started with the project, follow these steps:
 1. Clone this repository
 
 ```
-git clone https://github.com/ehsangazar/healthtech
+git clone https://github.com/ehsangazar/mail-scheduler
 ```
 
 2. Install dependencies:
@@ -52,8 +52,6 @@ curl --location 'localhost:3000/event' \
 ### Technical Notes
 
 Before diving into the codebase, it's recommended to review the provided MindMap diagram, which offers a clear overview of the project structure and components.
-
-![Diagram](https://github.com/ehsangazar/healthtech/blob/main/docs/diagram.png?raw=true)
 
 Key Components:
 

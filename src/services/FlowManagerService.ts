@@ -48,7 +48,11 @@ class FlowManagerService {
             this.emit(next, item.userEmail);
           });
         } else {
-          this.emailQueueServiceObj.enqueue(item);
+          if (item.retry && item.retry >= config.RETRY) return;
+          this.emailQueueServiceObj.enqueue({
+            ...item,
+            retry: item.retry ? item.retry + 1 : 1,
+          });
         }
       }
       await new Promise((resolve) =>
