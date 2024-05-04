@@ -45,18 +45,6 @@ const postEvent = async (req, res) => {
 };
 
 const getEvent = async (req, res) => {
-  const validator = new Validator(req.body, {
-    eventName: "required",
-    userEmail: "required|email",
-  });
-
-  if (validator.fails()) {
-    return res.status(400).json({
-      message: "invalid data",
-      errors: validator.errors.all(),
-    });
-  }
-
   let length = 0;
   if (req.mailSchedulerFlowManager)
     length = req.mailSchedulerFlowManager.getTaskQueueServiceLength();
