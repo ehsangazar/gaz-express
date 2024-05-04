@@ -26,17 +26,20 @@ const postEvent = async (req, res) => {
         );
       } else {
         res.status(400).json({
+          status: "error",
           message: "User already in queue",
         });
       }
     } else {
       res.status(400).json({
+        status: "error",
         message: "System is overloaded with tasks, you can try later",
       });
     }
   }
 
   res.status(200).json({
+    status: "success",
     message: "event emitted",
   });
 };
@@ -59,6 +62,7 @@ const getEvent = async (req, res) => {
     length = req.mailSchedulerFlowManager.getTaskQueueServiceLength();
 
   res.status(200).json({
+    status: "success",
     message: "success",
     length,
   });
