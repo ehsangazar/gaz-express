@@ -1,5 +1,5 @@
 {
-  "name": "mail-scheduler",
+  "name": "gaz-express",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
@@ -13,8 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "events": "^3.3.0",
     "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
     "pino": "^8.20.0",
     "pino-http": "^9.0.0",
     "pino-pretty": "^11.0.0",
@@ -22,10 +25,10 @@
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.7",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
-    "prisma": "^5.13.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
   }

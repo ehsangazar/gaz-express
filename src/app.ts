@@ -2,45 +2,53 @@ import express from "express";
 import logger from "./utils/logger";
 import { pinoHttp } from "pino-http";
 import bodyParser from "body-parser";
-import routes from "./routes";
+import routes from "./routes/routes";
 import {
   developmentErrors,
   notFound,
   productionErrors,
 } from "./utils/errorHandler";
-import FlowManagerService from "./services/FlowManagerService";
-import flowMap from "./config/flowMap";
+import FlowManagerService from "./routes/mail-scheduler/services/FlowManagerService";
+import flowMap from "./routes/mail-scheduler/config/flowMap";
+import dotenv from "dotenv";
+import cors from "cors";
+
+dotenv.config({ path: ".env" });
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
-const flowManager = new FlowManagerService(flowMap);
-flowManager.listen();
+const mailSchedulerFlowManager = new FlowManagerService(flowMap);
+mailSchedulerFlowManager.listen();
 
 app.use(
   pinoHttp({
     logger,
     serializers: {
-      req: (req) => ({
-        id: req.id,
-        method: req.method,
-        url: req.url,
-      }),
-      res: (res) => ({
-        statusCode: res.statusCode,
-      }),
+      req: (req) =>
+        JSON.stringify({
+          id: req.id,
+          method: req.method,
+          url: req.url,
+        }),
+      res: (res) =>
+        JSON.stringify({
+          statusCode: res.statusCode,
+        }),
     },
   })
 );
 
 app.use((req, res, next) => {
   req.logger = logger;
-  req.flowManager = flowManager;
+  req.mailSchedulerFlowManager = mailSchedulerFlowManager;
   next();
 });
 
 app.use("/", routes);
+app.get("/favicon.ico", (req, res) => res.status(204));
 
 if (app.get("env") === "development") {
   app.use(developmentErrors);
@@ -50,7 +58,10 @@ if (app.get("env") === "development") {
 
 app.use(notFound);
 
-app.set("port", process.env.PORT || 3000);
-const server = app.listen(app.get("port"), () => {
-  console.log(`Express running → PORT ${server.address().port}`);
-});
+app
+  .listen(process.env.PORT || 3000, "0.0.0.0", () => {
+    console.log(`Server is running on http://0.0.0.0:3000`);
+  })
+  .on("error", (e) => {
+    console.log("Error happened: ", e.message);
+  });

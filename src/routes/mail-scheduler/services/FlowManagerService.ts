@@ -115,6 +115,10 @@ class FlowManagerService {
   startProcessTaskQueue() {
     this.processTaskQueue();
   }
+
+  getTaskQueueServiceLength() {
+    return this.taskQueueServiceObj.getLength();
+  }
 }
 
 export default FlowManagerService;
