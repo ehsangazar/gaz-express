@@ -13,8 +13,28 @@ const postEvent = async (req, res) => {
     });
   }
 
-  if (req.mailSchedulerFlowManager)
-    req.mailSchedulerFlowManager.emit(req.body.eventName, req.body.userEmail);
+  if (req.mailSchedulerFlowManager) {
+    if (req.mailSchedulerFlowManager.taskQueueServiceObj.getLength() < 20) {
+      if (
+        !req.mailSchedulerFlowManager.taskQueueServiceObj.search(
+          req.body.userEmail
+        )
+      ) {
+        req.mailSchedulerFlowManager.emit(
+          req.body.eventName,
+          req.body.userEmail
+        );
+      } else {
+        res.status(400).json({
+          message: "User already in queue",
+        });
+      }
+    } else {
+      res.status(400).json({
+        message: "System is overloaded with tasks, you can try later",
+      });
+    }
+  }
 
   res.status(200).json({
     message: "event emitted",

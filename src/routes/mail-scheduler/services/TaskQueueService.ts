@@ -1,6 +1,9 @@
 interface Task {
   executionTime: number;
-  data: any;
+  data: {
+    userEmail: string;
+    retry?: number;
+  };
 }
 
 class TaskHeapService {
@@ -73,6 +76,12 @@ class TaskHeapService {
     this.heap[0] = this.heap.pop();
     this.bubbleDown(0);
     return min;
+  }
+
+  search(userEmail) {
+    return (
+      this.heap.findIndex((item) => item.data.userEmail === userEmail) !== -1
+    );
   }
 
   getLength() {

@@ -14,7 +14,7 @@ export type IflowMap = {
 const flowMap = {
   testEmail: {
     when: {
-      seconds: 5,
+      hours: 2,
     },
     subject: "Welcome To Gazar.dev",
     body: "This is a test Email sent from Gazar.dev based on your request",
