@@ -1,8 +1,10 @@
 import express from "express";
+import { createServer } from "node:http";
 import logger from "./utils/logger";
 import { pinoHttp } from "pino-http";
 import bodyParser from "body-parser";
 import routes from "./routes/routes";
+import { receive } from "./routes/chat/controller";
 import {
   developmentErrors,
   notFound,
@@ -12,16 +14,36 @@ import FlowManagerService from "./routes/mail-scheduler/services/FlowManagerServ
 import flowMap from "./routes/mail-scheduler/config/flowMap";
 import dotenv from "dotenv";
 import cors from "cors";
+import { Server } from "socket.io";
+import ChatQueueService from "./routes/chat/services/ChatQueueService";
 
-dotenv.config({ path: ".env" });
+dotenv.config();
 
 const app = express();
+const server = createServer(app);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
+// MAIL SCHEDULER FLOW MANAGER
 const mailSchedulerFlowManager = new FlowManagerService(flowMap);
 mailSchedulerFlowManager.listen();
+
+// SOCKET IO
+const chatQueue = new ChatQueueService();
+const io = new Server(server, {
+  path: "/chat",
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  socket.emit("chat:receive", chatQueue.getQueue());
+  socket.on("chat:send", (data) => receive(io, socket, chatQueue, data));
+});
 
 app.use(
   pinoHttp({
@@ -58,10 +80,8 @@ if (app.get("env") === "development") {
 
 app.use(notFound);
 
-app
-  .listen(process.env.PORT || 3000, "0.0.0.0", () => {
-    console.log(`Server is running on http://0.0.0.0:3000`);
-  })
-  .on("error", (e) => {
-    console.log("Error happened: ", e.message);
-  });
+server.listen(Number(process.env.PORT || 3000), "0.0.0.0", () => {
+  logger.info(
+    `Server is running on port http://${"0.0.0.0"}:${process.env.PORT}`
+  );
+});
