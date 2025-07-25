@@ -12,6 +12,7 @@ import {
 } from "./utils/errorHandler";
 import FlowManagerService from "./routes/mail-scheduler/services/FlowManagerService";
 import flowMap from "./routes/mail-scheduler/config/flowMap";
+import BackupSchedulerService from "./routes/backup/services/BackupSchedulerService";
 import dotenv from "dotenv";
 import cors from "cors";
 import { Server } from "socket.io";
@@ -29,6 +30,10 @@ app.use(cors());
 // MAIL SCHEDULER FLOW MANAGER
 const mailSchedulerFlowManager = new FlowManagerService(flowMap);
 mailSchedulerFlowManager.listen();
+
+// BACKUP SCHEDULER
+const backupScheduler = new BackupSchedulerService();
+backupScheduler.start();
 
 // SOCKET IO
 const chatQueue = new ChatQueueService();
