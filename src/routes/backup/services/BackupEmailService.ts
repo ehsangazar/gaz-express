@@ -19,7 +19,7 @@ interface BackupSummary {
 }
 
 class BackupEmailService {
-  private transporter = nodemailer.createTransporter({
+  private transporter = nodemailer.createTransport({
     host: process.env.SMTP_ENDPOINT,
     port: Number(process.env.SMTP_PORT),
     secure: true,
